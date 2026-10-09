@@ -15,6 +15,44 @@
 </head>
 <body>
 
+  <!-- SECURITY GATE / ACCESS CODE OVERLAY (NIVEL 1) -->
+  <div id="accessGateModal" class="gate-overlay">
+    <div class="gate-card">
+      <div class="gate-logo-badge">🔐</div>
+      <span class="gate-brand-pill">MUNDO SALUD MÉDICA · ENTERPRISE AI</span>
+      <h1 class="gate-title">Acceso Restringido</h1>
+      <p class="gate-subtitle">
+        Programa Ejecutivo de Inteligencia Artificial. Este entorno está reservado exclusivamente para colaboradores y entidades autorizadas.
+      </p>
+
+      <form id="gateForm" class="gate-form" onsubmit="event.preventDefault(); window.academyApp.checkAccessKey();">
+        <div class="gate-input-wrapper">
+          <input 
+            type="password" 
+            id="gateKeyInput" 
+            class="gate-input" 
+            placeholder="Ingrese el código de acceso" 
+            autocomplete="current-password"
+            required
+          />
+          <button type="button" id="gateToggleEye" class="gate-eye-btn" title="Mostrar/Ocultar clave">👁️</button>
+        </div>
+
+        <div id="gateErrorMsg" class="gate-error" style="display: none;">
+          ⚠️ Código de acceso incorrecto. Solicite autorización a la coordinación de Mundo Salud Médica.
+        </div>
+
+        <button type="submit" id="gateSubmitBtn" class="gate-btn-submit">
+          <span>Desbloquear Academia</span> ➔
+        </button>
+      </form>
+
+      <div class="gate-footer-note">
+        🔒 Sesión segura. Al ingresar, su acceso se mantendrá activo en este navegador.
+      </div>
+    </div>
+  </div>
+
   <!-- Top Header Navigation -->
   <header class="app-header">
     <div class="header-container">
@@ -48,6 +86,9 @@
 
         <!-- Dark/Light Theme Toggle -->
         <button id="themeToggle" class="theme-toggle-btn" title="Cambiar tema">🌙</button>
+
+        <!-- Lock Session Button -->
+        <button id="lockSessionBtn" class="theme-toggle-btn" title="Bloquear sesión" onclick="window.academyApp.lockSession()">🔒</button>
       </div>
     </div>
   </header>

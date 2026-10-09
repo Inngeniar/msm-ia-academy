@@ -954,6 +954,68 @@ FORMATO: Cláusula redactada lista para incluir en contrato con nota explicativa
     epsSelect.dispatchEvent(event);
   }
 
+  // ==========================================================================
+  // GATEKEEPER SECURITY MODULE (NIVEL 1 ACCESS CONTROL)
+  // ==========================================================================
+  const AUTH_KEY = 'MSM-IA-2026';
+  const gateModal = document.getElementById('accessGateModal');
+  const gateInput = document.getElementById('gateKeyInput');
+  const gateError = document.getElementById('gateErrorMsg');
+  const gateEye = document.getElementById('gateToggleEye');
+
+  function checkStoredAuth() {
+    const isAuthed = localStorage.getItem('msm_academy_access_token') === 'authorized';
+    if (isAuthed && gateModal) {
+      gateModal.classList.add('hidden');
+    } else if (gateModal) {
+      gateModal.classList.remove('hidden');
+      setTimeout(() => gateInput?.focus(), 250);
+    }
+  }
+
+  function verifyAccessCode() {
+    if (!gateInput) return;
+    const entered = gateInput.value.trim().toUpperCase();
+    if (entered === AUTH_KEY.toUpperCase()) {
+      localStorage.setItem('msm_academy_access_token', 'authorized');
+      if (gateError) gateError.style.display = 'none';
+      if (gateModal) gateModal.classList.add('hidden');
+    } else {
+      if (gateError) {
+        gateError.style.display = 'block';
+        gateInput.focus();
+        gateInput.select();
+      }
+    }
+  }
+
+  function lockAcademySession() {
+    localStorage.removeItem('msm_academy_access_token');
+    if (gateModal) {
+      gateModal.classList.remove('hidden');
+      if (gateInput) {
+        gateInput.value = '';
+        setTimeout(() => gateInput.focus(), 200);
+      }
+      if (gateError) gateError.style.display = 'none';
+    }
+  }
+
+  // Toggle eye visibility
+  gateEye?.addEventListener('click', () => {
+    if (!gateInput) return;
+    if (gateInput.type === 'password') {
+      gateInput.type = 'text';
+      gateEye.textContent = '🙈';
+    } else {
+      gateInput.type = 'password';
+      gateEye.textContent = '👁️';
+    }
+  });
+
+  // Run initial gate check
+  checkStoredAuth();
+
   // Expose methods for inline onclick events
   window.academyApp = {
     selectSession: (num) => renderSessionDetail(num),
@@ -962,7 +1024,9 @@ FORMATO: Cláusula redactada lista para incluir en contrato con nota explicativa
     resetMaturity: () => resetMaturity(),
     applyPreset: (idx) => applyPreset(idx),
     loadPredictorCase: (caseId) => loadPredictorCase(caseId),
-    openTab: (tabId) => switchTab(tabId)
+    openTab: (tabId) => switchTab(tabId),
+    checkAccessKey: () => verifyAccessCode(),
+    lockSession: () => lockAcademySession()
   };
 
   // Initial Run
